@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVR Tyres — Admin</title>
+  <link rel="icon" href="tyre.png" type="image/png">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="loginBox" class="login-screen">
+    <div class="login-card">
+      <div class="login-brand">
+        <img src="tyre.png" alt="SVR Tyres" class="login-logo">
+        <h1>SVR Tyres</h1>
+        <p>Management System</p>
+      </div>
+      <div class="login-form">
+        <h2>Welcome back</h2>
+        <p class="login-subtitle">Sign in to your admin account</p>
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="password" placeholder="Password">
+        </div>
+        <button class="btn-primary" onclick="login()">
+          <span>Sign In</span>
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="mainApp" class="app-shell" style="display:none;">
+
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img src="tyre.png" alt="Logo" class="sidebar-logo">
+        <div>
+          <span class="sidebar-title">SVR Tyres</span>
+          <span class="sidebar-subtitle">Admin Panel</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="dashboard" onclick="showSection('dashboard')">
+          <i class="fas fa-chart-pie"></i> Dashboard
+        </button>
+        <button class="nav-item" data-section="inventory" onclick="showSection('inventory')">
+          <i class="fas fa-warehouse"></i> Inventory
+        </button>
+        <button class="nav-item" data-section="billing" onclick="showSection('billing')">
+          <i class="fas fa-cash-register"></i> Billing
+        </button>
+        <button class="nav-item" data-section="analytics" onclick="showSection('analytics')">
+          <i class="fas fa-chart-line"></i> Analytics
+        </button>
+        <button class="nav-item" data-section="customers" onclick="showSection('customers')">
+          <i class="fas fa-users"></i> Customers
+        </button>
+      </nav>
+
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </aside>
+
+    <main class="main-content">
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <h2 id="pageTitle">Dashboard</h2>
+          <p id="pageSubtitle">Overview of your tyre shop</p>
+        </div>
+        <div class="topbar-right">
+          <div class="admin-badge">
+            <i class="fas fa-user-shield"></i>
+            <span>Administrator</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- DASHBOARD -->
+      <section id="section-dashboard" class="section active">
+        <div class="stats-grid">
+          <div class="stat-card stat-sales">
+            <div class="stat-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Total Sales</span>
+              <span class="stat-value" id="totalSales">₹0</span>
+            </div>
+          </div>
+          <div class="stat-card stat-customers">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Customers</span>
+              <span class="stat-value" id="totalCustomers">0</span>
+            </div>
+          </div>
+          <div class="stat-card stat-today">
+            <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Today's Sales</span>
+              <span class="stat-value" id="todaySales">₹0</span>
+            </div>
+          </div>
+          <div class="stat-card stat-profit">
+            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Total Profit</span>
+              <span class="stat-value" id="totalProfit">₹0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-filter"></i> Sales Filter</h3>
+          </div>
+          <div class="filter-bar">
+            <button class="btn-filter" onclick="filterSales('today')">Today</button>
+            <button class="btn-filter" onclick="filterSales('week')">This Week</button>
+            <button class="btn-filter" onclick="filterSales('month')">This Month</button>
+            <button class="btn-outline" onclick="exportExcel()">
+              <i class="fas fa-file-export"></i> Export CSV
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- INVENTORY -->
+      <section id="section-inventory" class="section">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-warehouse"></i> Inventory</h3>
+            <div class="stock-badges">
+              <span class="badge badge-neutral" id="stockCount">Total Stock: 0</span>
+              <span class="badge badge-warning" id="lowStockCount">Low Stock: 0</span>
+              <span class="badge badge-danger" id="outOfStockCount">Out of Stock: 0</span>
+            </div>
+          </div>
+
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search" placeholder="Search by brand or size…" onkeyup="searchTyres()">
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Brand</th>
+                  <th>Size</th>
+                  <th>Price</th>
+                  <th>Qty</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-plus-circle"></i> Add Tyre</h3>
+          </div>
+          <div class="form-grid">
+            <input type="text" id="brand" placeholder="Brand">
+            <input type="text" id="size" placeholder="Size">
+            <input type="number" id="price" placeholder="Selling Price">
+            <input type="number" id="cost" placeholder="Cost Price">
+            <input type="number" id="quantity" placeholder="Quantity">
+          </div>
+          <button class="btn-primary" onclick="addTyre()">
+            <i class="fas fa-plus"></i> Add Tyre
+          </button>
+        </div>
+      </section>
+
+      <!-- BILLING -->
+      <section id="section-billing" class="section">
+        <div class="billing-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-shopping-cart"></i> New Sale</h3>
+            </div>
+            <div class="form-stack">
+              <input type="text" id="customerName" placeholder="Customer Name">
+              <input type="text" id="customerPhone" placeholder="Phone Number" oninput="formatPhone(this)">
+              <select id="tyreSelect" onchange="disableSale()"></select>
+              <input type="number" id="billQty" placeholder="Quantity" oninput="disableSale()">
+            </div>
+            <div class="btn-row">
+              <button class="btn-primary" onclick="addToCart()">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+              <button class="btn-success" onclick="completeSale()" id="saleBtn" disabled>
+                <i class="fas fa-check"></i> Complete Sale
+              </button>
+            </div>
+
+            <div class="cart-section">
+              <h4>Cart</h4>
+              <div id="cartBox"></div>
+              <p class="cart-total" id="total"></p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-file-invoice"></i> Invoice</h3>
+            </div>
+            <div id="invoiceBox" class="invoice-preview"></div>
+            <div class="btn-row">
+              <button class="btn-outline" onclick="printInvoice()">
+                <i class="fas fa-print"></i> Print
+              </button>
+              <button class="btn-whatsapp" onclick="sendWhatsApp()">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section id="section-analytics" class="section">
+        <div class="charts-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-chart-area"></i> Sales Trend</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="salesChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-chart-bar"></i> Profit Overview</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="profitChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CUSTOMERS -->
+      <section id="section-customers" class="section">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-receipt"></i> Customer History</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Date</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="customerTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div id="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>
