@@ -41,7 +41,7 @@ window.onload = function () {
   displayCart();
   updateDashboard();
   loadChart();
-  loadProfitChart(); // ✅ ADD THIS
+  loadProfitChart(); //  ADD THIS
   loadCustomers();
 };
 
@@ -49,7 +49,7 @@ function addTyre() {
   let brand = document.getElementById("brand").value;
   let size = document.getElementById("size").value;
   let price = document.getElementById("price").value;
-  let cost = document.getElementById("cost").value; // ✅ ADD
+  let cost = document.getElementById("cost").value; //  ADD
   let quantity = document.getElementById("quantity").value;
 
   // validation
